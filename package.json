@@ -8,9 +8,5 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "discord.js": "^14.11.0",
-    "eslint": "^8.40.0"
-  }
+  "license": "ISC"
 }
