@@ -36,7 +36,15 @@ app.get('/callback', async (request, response) => {
           }
         }
       );
-      response.send(res.data);
+      const { access_token, refresh_token } = res.data;
+      const accessToken = access_token;
+      const refreshToken = refresh_token;
+      console.log({
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      });
+      localStorage.setItem('accessToken', accessToken)
+      response.sendStatus(200);
     } catch (err) {
       console.log(err);
       response.sendStatus(400);
