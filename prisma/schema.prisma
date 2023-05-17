@@ -15,4 +15,5 @@ model User {
     id Int @id @default(autoincrement())
     accessToken String 
     refreshToken String 
+    discord_id BigInt
   }
