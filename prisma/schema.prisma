@@ -12,8 +12,15 @@ datasource db {
 
 // Auto increment is a temporary solution
 model User {
-    id Int @id @default(autoincrement())
-    accessToken String 
-    refreshToken String 
-    discord_id BigInt
-  }
+  id        String @id @default(cuid())
+  discordID BigInt
+  Token     Token?
+}
+
+model Token {
+  id           Int    @id @default(autoincrement())
+  accessToken  String
+  refreshToken String
+  user         User  @relation(fields: [userId], references: [id])
+  userId       String @unique
+}
