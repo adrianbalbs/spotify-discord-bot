@@ -49,8 +49,9 @@ export async function removeDiscordUser(discordId: string) {
     params: {
       discordId: discordId
     }
-  })
-  if (res.data == 'OK') {
+  });
+  console.log(res.data);
+  if (res.data === 'OK') {
     return true;
   } else {
     return false;
