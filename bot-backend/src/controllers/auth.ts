@@ -32,6 +32,7 @@ export async function obtainAuthToken (req: Request, res: Response) {
       // Store authorized user into the database
       const { access_token, refresh_token } = response.data;
       const token = await prisma.token.create({ data: { accessToken: access_token, refreshToken: refresh_token, ownedBy: state.toString() } });
+      console.log(token);
       res.json(token);
     } catch (err) {
       console.log(err);
@@ -41,5 +42,3 @@ export async function obtainAuthToken (req: Request, res: Response) {
     res.sendStatus(404);
   }
 }
-
-// TODO: Token Refresher, Token/User Remove
