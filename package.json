@@ -26,7 +26,6 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "@spotifly/auth-token": "^2.0.1",
     "dotenv": "^16.0.3"
   }
 }

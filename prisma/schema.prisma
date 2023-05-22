@@ -12,10 +12,10 @@ datasource db {
 
 // Auto increment is a temporary solution
 model User {
-  userId    String @unique
-  discordId BigInt
-  token     Token @relation(fields: [userId], references: [ownedBy])
-  @@id([userId, discordId])
+  discordId String @id @default(cuid())
+  username  String
+  state     String @unique
+  token     Token @relation(fields: [state], references: [ownedBy])
 }
 
 model Token {

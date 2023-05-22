@@ -31,10 +31,6 @@ export async function obtainAuthToken (req: Request, res: Response) {
       
       // Store authorized user into the database
       const { access_token, refresh_token } = response.data;
-
-      // Temporary user insertion to respect foreign key restrains, will actually be added in the discord bot itself first
-      //const user = await prisma.user.create({ data: { id: state.toString(), discordID: parseInt(state.toString()) }})
-      //console.log(user);
       const token = await prisma.token.create({ data: { accessToken: access_token, refreshToken: refresh_token, ownedBy: state.toString() } });
       res.json(token);
     } catch (err) {
@@ -45,3 +41,5 @@ export async function obtainAuthToken (req: Request, res: Response) {
     res.sendStatus(404);
   }
 }
+
+// TODO: Token Refresher, Token/User Remove
