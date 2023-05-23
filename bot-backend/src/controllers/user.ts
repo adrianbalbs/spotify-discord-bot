@@ -1,21 +1,29 @@
 
 import { PrismaClient } from "@prisma/client";
 import 'dotenv/config';
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
+import assertIsDefined from "../helpers/assertIsDefined";
 
 const prisma = new PrismaClient();
 
-export async function getUserTokenFromState(req: Request, res: Response) {
-  const state  = req.query.state as string;
-  const token = await prisma.token.findFirst({ 
-    where: {
-      ownedBy: state.toString(),
-    }
-  })
-  res.json(token);
+export async function getUserTokenFromState(req: Request, res: Response, next: NextFunction) {
+  const { state }  = req.query;
+  try {
+    assertIsDefined(state);
+
+    const token = await prisma.token.findFirst({ 
+      where: {
+        ownedBy: state.toString(),
+      }
+    })
+    res.json(token);
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
 } 
 
-export async function registerDiscordUser(req: Request, res: Response) {
+export async function registerDiscordUser(req: Request, res: Response, next: NextFunction) {
   try {
     const { discordId, username, state } = req.body;
     const discordUser = await prisma.user.create({ 
@@ -30,28 +38,38 @@ export async function registerDiscordUser(req: Request, res: Response) {
     res.json(discordUser);
   } catch (err) {
     console.error(err);
-    res.sendStatus(404);
+    next(err);
   }
 }
 
-export async function getDiscordUser(req: Request, res: Response) {
-  const discordId = req.query.discordId as string;
-  const discordUser = await prisma.user.findFirst({ 
-    where: {
-      discordId: discordId
-    }
-  });
-  console.log(discordUser);
-  res.json(discordUser);
+export async function getDiscordUser(req: Request, res: Response, next: NextFunction) {
+  const { discordId } = req.query;
+  try {
+    assertIsDefined(discordId);
+
+    const discordUser = await prisma.user.findFirst({ 
+      where: {
+        discordId: discordId as string
+      }
+    });
+
+    console.log(discordUser);
+    res.json(discordUser);
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
 }
 
-export async function removeUserAndToken(req: Request, res: Response) {
-  const discordId = req.query.discordId as string;
-  console.log(discordId);
+export async function removeUserAndToken(req: Request, res: Response, next: NextFunction) {
+  const { discordId } = req.query;
+
   try {
+    assertIsDefined(discordId);
+
     const deleteUser = await prisma.user.delete({
       where: {
-        discordId: discordId
+        discordId: discordId as string
       },
       select: {
         state: true,
@@ -68,11 +86,11 @@ export async function removeUserAndToken(req: Request, res: Response) {
         ownedBy: true
       }
     });
-    
+
     console.log(deleteToken);
     res.sendStatus(200);
   } catch (err) {
-    res.sendStatus(400);
+    console.log(err);
+    next(err);
   }
-
 }
