@@ -38,6 +38,7 @@ async function main() {
             discord_js_1.GatewayIntentBits.Guilds
         ]
     });
+    // Import the slash commands 
     const commandsPath = path_1.default.join(__dirname, 'commands');
     const commandFiles = fs_1.default.readdirSync(commandsPath).filter(file => file.endsWith('.ts'));
     for (const file of commandFiles) {
@@ -50,6 +51,7 @@ async function main() {
             console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
         }
     }
+    // Handle slash commands
     client.on(discord_js_1.Events.InteractionCreate, async (interaction) => {
         if (!interaction.isChatInputCommand())
             return;

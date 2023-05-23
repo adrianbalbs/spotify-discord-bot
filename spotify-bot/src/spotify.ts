@@ -29,16 +29,29 @@ export async function getUserTokenAndStore(state: string, userId: string, user: 
 
 async function getUserToken(state: string) {
   const res = await axios.get('http://localhost:3000/api/user/token', {params: {state: state }})
-  if (res.data) {
-    return true;
-  } else {
+  if (res.data === null) {
     return false;
   }
+  return true;
+
 }
 
 export async function getDiscordUser(discordId: string) {
   const res = await axios.get('http://localhost:3000/api/user/discord', {params: {discordId: discordId }})
-  if (res.data) {
+  if (res.data === null) {
+    return false;
+  } 
+  return true;
+}
+
+export async function removeDiscordUser(discordId: string) {
+  const res = await axios.delete('http://localhost:3000/api/user/remove', {
+    params: {
+      discordId: discordId
+    }
+  });
+  console.log(res.data);
+  if (res.data === 'OK') {
     return true;
   } else {
     return false;
