@@ -1,4 +1,4 @@
-import { Events, GatewayIntentBits } from 'discord.js';
+import { GatewayIntentBits } from 'discord.js';
 import MyClient from './types';
 import 'dotenv/config';
 import fs from 'fs';
@@ -29,23 +29,20 @@ async function main() {
     }
   }
 
-  // Handle slash commands
-  client.on(Events.InteractionCreate, async interaction => {
-    if (!interaction.isChatInputCommand()) return;
-    const command = client.commands.get(interaction.commandName);
+  // Import and run events
+  const eventsPath = path.join(__dirname, 'events');
+  const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.ts'));
 
-    if (!command) return;
-    
-    try {
-      command.execute(interaction);
-    } catch (err) {
-      console.error(err);
+  for (const file of eventFiles) {
+    const filePath = path.join(eventsPath, file);
+    const event = await import(filePath);
+
+    if (event.once) {
+      client.once(event.name, (...args) => event.execute(...args));
+    } else {
+      client.on(event.name, (...args) => event.execute(...args));
     }
-  });
-
-  client.once(Events.ClientReady, c => {
-    console.log(`Ready! Logged in as ${c.user.tag}`);
-  });
+  }
 
   client.login(DISCORD_BOT_TOKEN);
 }
