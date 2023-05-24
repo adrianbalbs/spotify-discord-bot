@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Token } from "@prisma/client";
 import "dotenv/config";
 import axios from "axios";
 import url from "url";
@@ -6,14 +6,14 @@ import url from "url";
 const { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = process.env;
 const prisma = new PrismaClient();
 
-export async function refreshAcessToken(refresh_token: string, id: number) {
+async function refreshAcessToken(refreshToken: string, id: number) {
   try {
     const basic = Buffer.from(
       SPOTIFY_CLIENT_ID + ":" + SPOTIFY_CLIENT_SECRET
     ).toString("base64");
     const formData = new url.URLSearchParams({
       grant_type: "refresh_token",
-      refresh_token: refresh_token,
+      refresh_token: refreshToken,
     });
 
     const res = await axios.post(
@@ -26,14 +26,31 @@ export async function refreshAcessToken(refresh_token: string, id: number) {
         },
       }
     );
+
     const { access_token } = res.data;
     const updateToken = await prisma.token.update({
       where: { id: id },
       data: { accessToken: access_token },
     });
+
     console.log(updateToken);
-    return { access_token: access_token };
+    return updateToken;
   } catch (err) {
     throw new Error(err);
   }
+}
+
+export async function checkAndRefreshAccessToken(token: Token) {
+  const currTime = new Date();
+
+  if (currTime >= token.expiresAt) {
+    try {
+      const newToken = await refreshAcessToken(token.refreshToken, token.id);
+      return newToken;
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+
+  return token;
 }

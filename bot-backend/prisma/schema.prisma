@@ -10,7 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Auto increment is a temporary solution
 model User {
   discordId String @id @default(cuid())
   username  String

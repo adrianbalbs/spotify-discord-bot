@@ -4,15 +4,18 @@ import { NextFunction, Request, Response } from "express";
 import axios from "axios";
 import url from "url";
 import assertIsDefined from "../helpers/assertIsDefined";
-
 const { PORT, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = process.env;
 const prisma = new PrismaClient();
 
-export async function obtainAuthToken(req: Request, res: Response, next: NextFunction) {
+export async function obtainAuthToken(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const { code, state } = req.query;
-  const basic = Buffer.from(SPOTIFY_CLIENT_ID + ":" + SPOTIFY_CLIENT_SECRET).toString(
-    "base64"
-  );
+  const basic = Buffer.from(
+    SPOTIFY_CLIENT_ID + ":" + SPOTIFY_CLIENT_SECRET
+  ).toString("base64");
 
   try {
     assertIsDefined(code);
@@ -49,7 +52,7 @@ export async function obtainAuthToken(req: Request, res: Response, next: NextFun
       },
     });
     console.log(token);
-    res.json(token);
+    res.send("Spotify account linked, you can now close the browser!");
   } catch (err) {
     console.log(err);
     next(err);
