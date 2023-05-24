@@ -21,7 +21,7 @@ module.exports = {
     if (!user) {
       loginEmbed.setDescription(`Sign in to spotify with [this link](${link}) \
 			If you do not have a Spotify account you can register for one [here](https://spotify.com/signup)`);
-      await interaction.reply({ embeds: [loginEmbed] });
+      await interaction.reply({ embeds: [loginEmbed], ephemeral: true });
       const res = await getUserTokenAndStore(
         state,
         interaction.user.id,
@@ -32,6 +32,7 @@ module.exports = {
           embeds: [
             loginEmbed.setDescription("Spotify Account has been linked!"),
           ],
+          ephemeral: true,
         });
       } else {
         await interaction.followUp({
@@ -40,6 +41,7 @@ module.exports = {
               "Login has timed out, please try run the `/login` command again."
             ),
           ],
+          ephemeral: true,
         });
       }
     } else {
@@ -47,6 +49,7 @@ module.exports = {
         embeds: [
           loginEmbed.setDescription("You have already signed in to Spotify."),
         ],
+        ephemeral: true,
       });
     }
   },
