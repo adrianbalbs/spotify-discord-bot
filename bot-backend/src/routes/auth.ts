@@ -3,5 +3,5 @@ import { obtainAuthToken } from "../controllers/auth";
 
 const router = Router();
 
-router.get('/redirect', obtainAuthToken);
+router.get("/redirect", obtainAuthToken);
 export default router;
