@@ -1,4 +1,8 @@
-import { CommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import {
+  CommandInteraction,
+  EmbedBuilder,
+  SlashCommandBuilder,
+} from "discord.js";
 import { generateRandomString } from "../helpers";
 import { getDiscordUser, getUserTokenAndStore } from "../spotify";
 const { SPOTIFY_CLIENT_ID } = process.env;
@@ -25,7 +29,9 @@ module.exports = {
       );
       if (res) {
         await interaction.followUp({
-          embeds: [loginEmbed.setDescription("Spotify Account has been linked!")],
+          embeds: [
+            loginEmbed.setDescription("Spotify Account has been linked!"),
+          ],
         });
       } else {
         await interaction.followUp({
@@ -38,7 +44,9 @@ module.exports = {
       }
     } else {
       await interaction.reply({
-        embeds: [loginEmbed.setDescription("You have already signed in to Spotify.")],
+        embeds: [
+          loginEmbed.setDescription("You have already signed in to Spotify."),
+        ],
       });
     }
   },

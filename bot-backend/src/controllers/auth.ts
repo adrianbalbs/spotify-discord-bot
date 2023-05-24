@@ -36,11 +36,15 @@ export async function obtainAuthToken(req: Request, res: Response, next: NextFun
     );
 
     // Store authorized user into the database
+    const expiresAt = new Date();
+    expiresAt.setHours(expiresAt.getHours() + 1);
+
     const { access_token, refresh_token } = response.data;
     const token = await prisma.token.create({
       data: {
         accessToken: access_token,
         refreshToken: refresh_token,
+        expiresAt: expiresAt,
         ownedBy: state.toString(),
       },
     });

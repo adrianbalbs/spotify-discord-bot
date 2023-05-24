@@ -8,9 +8,9 @@ const prisma = new PrismaClient();
 
 export async function refreshAcessToken(refresh_token: string, id: number) {
   try {
-    const basic = Buffer.from(SPOTIFY_CLIENT_ID + ":" + SPOTIFY_CLIENT_SECRET).toString(
-      "base64"
-    );
+    const basic = Buffer.from(
+      SPOTIFY_CLIENT_ID + ":" + SPOTIFY_CLIENT_SECRET
+    ).toString("base64");
     const formData = new url.URLSearchParams({
       grant_type: "refresh_token",
       refresh_token: refresh_token,

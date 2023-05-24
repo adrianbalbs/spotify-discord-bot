@@ -1,7 +1,6 @@
 import "dotenv/config";
 import express from "express";
 import bodyparser from "body-parser";
-
 const { PORT } = process.env;
 
 async function main() {
@@ -10,9 +9,12 @@ async function main() {
   const app = express();
 
   app.use(bodyparser.json());
+
   app.use("/api", auth);
   app.use("/api", user);
-  app.listen(PORT, () => console.log(`App listening at http://localhost:${PORT}`));
+  app.listen(PORT, () =>
+    console.log(`App listening at http://localhost:${PORT}`)
+  );
 }
 
 main();
