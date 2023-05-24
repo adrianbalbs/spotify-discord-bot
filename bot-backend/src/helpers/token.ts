@@ -28,9 +28,13 @@ async function refreshAcessToken(refreshToken: string, id: number) {
     );
 
     const { access_token } = res.data;
+
+    const expiresAt = new Date();
+    expiresAt.setHours(expiresAt.getHours() + 1);
+
     const updateToken = await prisma.token.update({
       where: { id: id },
-      data: { accessToken: access_token },
+      data: { accessToken: access_token, expiresAt: expiresAt },
     });
 
     console.log(updateToken);
