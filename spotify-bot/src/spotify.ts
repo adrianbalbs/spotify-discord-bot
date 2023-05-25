@@ -1,6 +1,7 @@
 import axios from "axios";
 import { wait } from "./helpers";
 import "dotenv/config";
+import { TopArtistsReq, TopTracksReq } from "./types";
 
 const { PORT } = process.env;
 
@@ -88,10 +89,14 @@ async function registerUser(state: string, userId: string, user: string) {
   console.log(response.data);
 }
 
-export async function getUserTopTracks(discordId: string) {
+export async function getUserTopTracks(discordId: string, timeRange?: string) {
+  const params: TopTracksReq = { discordId: discordId };
+  if (timeRange !== null) {
+    params.time_range = timeRange;
+  }
   try {
     const res = await axios.get(`http://localhost:${PORT}/api/user/toptracks`, {
-      params: { discordId: discordId },
+      params: params,
     });
     return res.data.items;
   } catch (err) {
@@ -99,12 +104,16 @@ export async function getUserTopTracks(discordId: string) {
   }
 }
 
-export async function getUserTopArtists(discordId: string) {
+export async function getUserTopArtists(discordId: string, timeRange?: string) {
+  const params: TopArtistsReq = { discordId: discordId };
+  if (timeRange !== null) {
+    params.time_range = timeRange;
+  }
   try {
     const res = await axios.get(
       `http://localhost:${PORT}/api/user/topartists`,
       {
-        params: { discordId: discordId },
+        params: params,
       }
     );
     return res.data.items;

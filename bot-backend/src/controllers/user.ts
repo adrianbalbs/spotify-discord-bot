@@ -8,6 +8,7 @@ import {
   getTopArtistsNames,
   getTopTrackNames,
 } from "../helpers/spotifyHelpers";
+import { TopArtistParams, TopTrackParams } from "../types";
 const prisma = new PrismaClient();
 
 export async function getUserTokenFromState(
@@ -150,7 +151,7 @@ export async function getTopTracks(
   res: Response,
   next: NextFunction
 ) {
-  const { discordId } = req.query;
+  const { discordId, time_range } = req.query;
   try {
     assertIsDefined(discordId);
 
@@ -164,14 +165,19 @@ export async function getTopTracks(
     });
 
     assertIsDefined(discordUser);
+    const params: TopTrackParams = { limit: 20 };
 
+    if (time_range !== null) {
+      params.time_range = time_range as string;
+    }
     // If the token does not need to be refreshed we return the old token from the fucntion
     // We also assert null as we check if the user is in the databse from the bot itself before making the call
     discordUser.token = await checkAndRefreshAccessToken(discordUser.token);
 
     const topTracks = await axios.get(
-      "https://api.spotify.com/v1/me/top/tracks?limit=10",
+      "https://api.spotify.com/v1/me/top/tracks",
       {
+        params: params,
         headers: {
           Authorization: "Bearer " + discordUser!.token.accessToken,
         },
@@ -191,7 +197,7 @@ export async function getTopArtists(
   res: Response,
   next: NextFunction
 ) {
-  const { discordId } = req.query;
+  const { discordId, time_range } = req.query;
   try {
     assertIsDefined(discordId);
 
@@ -205,11 +211,19 @@ export async function getTopArtists(
     });
 
     assertIsDefined(discordUser);
+
+    const params: TopArtistParams = { limit: 20 };
+
     discordUser.token = await checkAndRefreshAccessToken(discordUser.token);
 
+    if (time_range !== null) {
+      params.time_range = time_range as string;
+    }
+
     const topTracks = await axios.get(
-      "https://api.spotify.com/v1/me/top/artists?limit=10",
+      "https://api.spotify.com/v1/me/top/artists",
       {
+        params: params,
         headers: {
           Authorization: "Bearer " + discordUser!.token.accessToken,
         },

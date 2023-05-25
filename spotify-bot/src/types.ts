@@ -42,3 +42,13 @@ export interface TopArtists {
   artistName: string;
   url: string;
 }
+
+export interface TopTracksReq {
+  discordId: string;
+  time_range?: string;
+}
+
+export interface TopArtistsReq {
+  discordId: string;
+  time_range?: string;
+}

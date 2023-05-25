@@ -1,24 +1,43 @@
 import {
-  CommandInteraction,
+  ChatInputCommandInteraction,
   EmbedBuilder,
   SlashCommandBuilder,
 } from "discord.js";
 import { getUserTopTracks } from "../spotify";
 import { TopTracks } from "../types";
 import { checkExistingDiscordUser } from "../handlers/commandHandlers";
+import { getTimeRangeCategory } from "../helpers";
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("toptracks")
-    .setDescription("Show the top tracks from a user's Spotify account."),
-  async execute(interaction: CommandInteraction) {
+    .setDescription("Show the top tracks from a user's Spotify account.")
+    .addStringOption((option) =>
+      option
+        .setName("time-range")
+        .setDescription("The time range of the user's top tracks")
+        .setRequired(false)
+        .addChoices(
+          { name: "Monthly", value: "short_term" },
+          { name: "Half-Yearly", value: "medium_term" },
+          { name: "All-Time", value: "long_term" }
+        )
+    ),
+  async execute(interaction: ChatInputCommandInteraction) {
     if (!(await checkExistingDiscordUser(interaction))) return;
 
+    const timeRange = interaction.options.getString("time-range");
     const tracksEmbed = new EmbedBuilder().setColor("#1ed760");
+
     try {
-      const topTracks: TopTracks[] = await getUserTopTracks(
-        interaction.user.id
-      );
+      let topTracks: TopTracks[];
+
+      if (timeRange !== null) {
+        topTracks = await getUserTopTracks(interaction.user.id, timeRange);
+      } else {
+        topTracks = await getUserTopTracks(interaction.user.id);
+      }
+
       const formattedTracks = topTracks
         .map((track, index) => {
           index++;
@@ -27,10 +46,14 @@ module.exports = {
         })
         .join("\n");
 
+      const timeTitle = getTimeRangeCategory(timeRange);
+
       await interaction.reply({
         embeds: [
           tracksEmbed
-            .setTitle(`**${interaction.user.username}'s Top Spotify Tracks**`)
+            .setTitle(
+              `**${interaction.user.username}'s Top Spotify Tracks - ${timeTitle}**`
+            )
             .setThumbnail(interaction.user.avatarURL())
             .setDescription(formattedTracks),
         ],
