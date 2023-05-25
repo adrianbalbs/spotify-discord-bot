@@ -3,34 +3,34 @@ import {
   EmbedBuilder,
   SlashCommandBuilder,
 } from "discord.js";
-import { getUserTopTracks } from "../spotify";
-import { TopTracks } from "../types";
+import { getUserTopArtists } from "../spotify";
+import { TopArtists } from "../types";
 import { checkExistingDiscordUser } from "../handlers/commandHandlers";
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("toptracks")
-    .setDescription("Show the top tracks from a user's Spotify account."),
+    .setName("topartists")
+    .setDescription("Show the top artists from a user's Spotify account."),
   async execute(interaction: CommandInteraction) {
     if (!(await checkExistingDiscordUser(interaction))) return;
 
-    const tracksEmbed = new EmbedBuilder().setColor("#1ed760");
+    const artistsEmbed = new EmbedBuilder().setColor("#1ed760");
     try {
-      const topTracks: TopTracks[] = await getUserTopTracks(
+      const topArtists: TopArtists[] = await getUserTopArtists(
         interaction.user.id
       );
-      const formattedTracks = topTracks
-        .map((track, index) => {
+      const formattedTracks = topArtists
+        .map((artist, index) => {
           index++;
-          const trackString = `${index}. [${track.name}](${track.trackUrl}) - **${track.artist}**`;
+          const trackString = `${index}. **[${artist.artistName}](${artist.url})**`;
           return trackString;
         })
         .join("\n");
 
       await interaction.reply({
         embeds: [
-          tracksEmbed
-            .setTitle(`**${interaction.user.username}'s Top Spotify Tracks**`)
+          artistsEmbed
+            .setTitle(`**${interaction.user.username}'s Top Spotify Artists**`)
             .setThumbnail(interaction.user.avatarURL())
             .setDescription(formattedTracks),
         ],
@@ -38,7 +38,7 @@ module.exports = {
     } catch (err) {
       await interaction.reply({
         embeds: [
-          tracksEmbed.setDescription(
+          artistsEmbed.setDescription(
             "An error has occured while trying to process this command."
           ),
         ],

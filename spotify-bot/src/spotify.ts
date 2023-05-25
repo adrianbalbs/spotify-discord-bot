@@ -98,3 +98,17 @@ export async function getUserTopTracks(discordId: string) {
     console.log(err);
   }
 }
+
+export async function getUserTopArtists(discordId: string) {
+  try {
+    const res = await axios.get(
+      `http://localhost:${PORT}/api/user/topartists`,
+      {
+        params: { discordId: discordId },
+      }
+    );
+    return res.data.items;
+  } catch (err) {
+    console.log(err);
+  }
+}
