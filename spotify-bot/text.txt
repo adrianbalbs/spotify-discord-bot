@@ -1,4 +1,0 @@
-
-> typescript-discord-bot@1.0.0 start
-> ts-node --esm ./src/index.ts
-
