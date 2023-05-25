@@ -1,7 +1,16 @@
 import axios from "axios";
 import { wait } from "./helpers";
+import "dotenv/config";
 
-export async function getUserTokenAndStore(state: string, userId: string, user: string) {
+const { PORT } = process.env;
+
+// Maybe put local host as an .env variable so I don't hardcode it in for deployment
+
+export async function getUserTokenAndStore(
+  state: string,
+  userId: string,
+  user: string
+) {
   let loginDelay = 8000;
   for (let i = 0; i < 11; i++) {
     await wait(loginDelay);
@@ -10,7 +19,9 @@ export async function getUserTokenAndStore(state: string, userId: string, user: 
 
     if (res) {
       registerUser(state, userId, user);
-      console.log(`Spotify user logged in with auth sesssion for ${user} ID: ${userId}`);
+      console.log(
+        `Spotify user logged in with auth sesssion for ${user} ID: ${userId}`
+      );
       return true;
     }
     if (!res && i == 10) {
@@ -27,7 +38,7 @@ export async function getUserTokenAndStore(state: string, userId: string, user: 
 }
 
 async function getUserToken(state: string) {
-  const res = await axios.get("http://localhost:3000/api/user/token", {
+  const res = await axios.get(`http://localhost:${PORT}/api/user/token`, {
     params: { state: state },
   });
   if (res.data === null) {
@@ -37,7 +48,7 @@ async function getUserToken(state: string) {
 }
 
 export async function getDiscordUser(discordId: string) {
-  const res = await axios.get("http://localhost:3000/api/user/discord", {
+  const res = await axios.get(`http://localhost:${PORT}/api/user/discord`, {
     params: { discordId: discordId },
   });
   if (res.data === null) {
@@ -47,7 +58,7 @@ export async function getDiscordUser(discordId: string) {
 }
 
 export async function removeDiscordUser(discordId: string) {
-  const res = await axios.delete("http://localhost:3000/api/user/remove", {
+  const res = await axios.delete(`http://localhost:${PORT}/api/user/remove`, {
     params: {
       discordId: discordId,
     },
@@ -62,7 +73,7 @@ export async function removeDiscordUser(discordId: string) {
 
 async function registerUser(state: string, userId: string, user: string) {
   const response = await axios.post(
-    "http://localhost:3000/api/user/register",
+    `http://localhost:${PORT}/api/user/register`,
     {
       discordId: userId,
       username: user,
@@ -75,4 +86,29 @@ async function registerUser(state: string, userId: string, user: string) {
     }
   );
   console.log(response.data);
+}
+
+export async function getUserTopTracks(discordId: string) {
+  try {
+    const res = await axios.get(`http://localhost:${PORT}/api/user/toptracks`, {
+      params: { discordId: discordId },
+    });
+    return res.data.items;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+export async function getUserTopArtists(discordId: string) {
+  try {
+    const res = await axios.get(
+      `http://localhost:${PORT}/api/user/topartists`,
+      {
+        params: { discordId: discordId },
+      }
+    );
+    return res.data.items;
+  } catch (err) {
+    console.log(err);
+  }
 }
