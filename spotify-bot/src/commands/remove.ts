@@ -1,49 +1,27 @@
 import {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
   CommandInteraction,
   EmbedBuilder,
   Interaction,
   SlashCommandBuilder,
 } from "discord.js";
-import { getDiscordUser, removeDiscordUser } from "../spotify";
+import { removeDiscordUser } from "../spotify";
+import {
+  buildConfirmAndDenyButtons,
+  checkExistingDiscordUser,
+} from "../handlers/commandHandlers";
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("remove")
     .setDescription("Remove your Spotify Account from the Spotify Bot"),
   async execute(interaction: CommandInteraction) {
-    const confirm = new ButtonBuilder()
-      .setCustomId("confirm")
-      .setLabel("Confirm")
-      .setStyle(ButtonStyle.Danger);
+    if (!(await checkExistingDiscordUser(interaction))) return;
 
-    const cancel = new ButtonBuilder()
-      .setCustomId("cancel")
-      .setLabel("Cancel")
-      .setStyle(ButtonStyle.Secondary);
-
-    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-      cancel,
-      confirm
-    );
+    const row = buildConfirmAndDenyButtons();
 
     const removalEmbed = new EmbedBuilder()
       .setColor("#1ed760")
       .setDescription("Are you sure you want to unlink your Spotify Account?");
-
-    if (!(await getDiscordUser(interaction.user.id))) {
-      await interaction.reply({
-        embeds: [
-          removalEmbed.setDescription(
-            "You have not linked your Spotify Account to our bot. \
-        Please use `/login` to link your Account with our bot."
-          ),
-        ],
-      });
-      return;
-    }
 
     const response = await interaction.reply({
       embeds: [removalEmbed],
