@@ -6,7 +6,11 @@ const { PORT } = process.env;
 
 // Maybe put local host as an .env variable so I don't hardcode it in for deployment
 
-export async function getUserTokenAndStore(state: string, userId: string, user: string) {
+export async function getUserTokenAndStore(
+  state: string,
+  userId: string,
+  user: string
+) {
   let loginDelay = 8000;
   for (let i = 0; i < 11; i++) {
     await wait(loginDelay);
@@ -15,7 +19,9 @@ export async function getUserTokenAndStore(state: string, userId: string, user: 
 
     if (res) {
       registerUser(state, userId, user);
-      console.log(`Spotify user logged in with auth sesssion for ${user} ID: ${userId}`);
+      console.log(
+        `Spotify user logged in with auth sesssion for ${user} ID: ${userId}`
+      );
       return true;
     }
     if (!res && i == 10) {
@@ -80,4 +86,15 @@ async function registerUser(state: string, userId: string, user: string) {
     }
   );
   console.log(response.data);
+}
+
+export async function getUserTopTracks(discordId: string) {
+  try {
+    const res = await axios.get(`http://localhost:${PORT}/api/user/toptracks`, {
+      params: { discordId: discordId },
+    });
+    return res.data.items;
+  } catch (err) {
+    console.log(err);
+  }
 }

@@ -31,3 +31,8 @@ export default class MyClient extends Client {
     this.commands = new Collection();
   }
 }
+
+export interface TopTracks {
+  name: string;
+  artist: string;
+}
