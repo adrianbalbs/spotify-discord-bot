@@ -146,7 +146,7 @@ export async function testTokenRefresh(
   }
 }
 
-export async function getTopTracks(
+export async function getUserTopTracks(
   req: Request,
   res: Response,
   next: NextFunction
@@ -192,7 +192,7 @@ export async function getTopTracks(
   }
 }
 
-export async function getTopArtists(
+export async function getUserTopArtists(
   req: Request,
   res: Response,
   next: NextFunction

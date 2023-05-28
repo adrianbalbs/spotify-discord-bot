@@ -31,7 +31,9 @@ async function main() {
 
   // Import and run events
   const eventsPath = path.join(__dirname, "events");
-  const eventFiles = fs.readdirSync(eventsPath).filter((file) => file.endsWith(".ts"));
+  const eventFiles = fs
+    .readdirSync(eventsPath)
+    .filter((file) => file.endsWith(".ts"));
 
   for (const file of eventFiles) {
     const filePath = path.join(eventsPath, file);
